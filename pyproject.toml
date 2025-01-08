@@ -30,7 +30,7 @@ classifiers = [
 dependencies = [
   "asgiref>=3.3",
   "django>=4.2",
-  "typing-extensions; python_version<'3.10'"
+  "typing-extensions; python_version<'3.12'"
 ]
 
 [project.urls]
@@ -110,16 +110,15 @@ python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 django = ["5.0", "5.1"]
 python = ["3.10", "3.11", "3.12"]
 
-[tool.hatch.envs.types]
-dependencies = [
-  "mypy>=1.0.0",
-]
-[tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/django_webfinger tests}"
-
 [tool.hatch.envs.hatch-static-analysis]
 config-path = "ruff_defaults.toml"
-dependencies = ["ruff==0.8.6", "deptry", "pre-commit"]
+skip-install = false
+dependencies = [
+  "deptry",
+  "mypy",
+  "pre-commit",
+  "ruff==0.8.6",
+]
 
 [tool.hatch.envs.hatch-static-analysis.scripts]
 format-check="ruff format{env:HATCH_FMT_ARGS:} --check --diff {args:.}"
@@ -127,12 +126,14 @@ format-fix="ruff format{env:HATCH_FMT_ARGS:} {args:.}"
 lint-check=[
   "SKIP=no-commit-to-branch,ruff,ruff-format pre-commit run --all-files --verbose",
   "ruff check{env:HATCH_FMT_ARGS:} {args:.}",
-  "deptry ."
+  "deptry .",
+  "mypy --install-types --non-interactive {args:src/django_webfinger tests}",
 ]
 lint-fix=[
   "SKIP=no-commit-to-branch,ruff,ruff-format pre-commit run --all-files --verbose",
   "ruff check{env:HATCH_FMT_ARGS:} --fix {args:.}",
   "deptry .",
+  "mypy --install-types --non-interactive {args:src/django_webfinger tests}",
 ]
 
 [[tool.mypy.overrides]]
